@@ -1,1 +1,13 @@
-/target/
+# Eclipse spezifische Dateien
+.metadata
+.classpath
+.project
+.settings/
+
+# Build Verzeichnisse
+bin/
+target/
+
+# Betriebssystemspezifische Dateien
+.DS_Store
+Thumbs.db
