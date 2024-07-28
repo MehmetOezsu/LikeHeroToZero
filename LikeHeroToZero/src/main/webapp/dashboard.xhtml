@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <title>Like Hero To Zero</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <style>
+        body {
+            background-color: rgb(235, 236, 231); /* Hintergrundfarbe setzen */
+        }
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        img {
+            width: 150px; /* Breite des Bildes anpassen */
+            height: auto;
+            margin: 20px;
+        }
+        h1 {
+            margin-left: 20px;
+        }
+        .green-button {
+            background-color: green !important; /* Buttonfarbe auf Grün setzen */
+            color: white !important;
+            border: none !important;
+            padding: 10px 20px !important;
+            cursor: pointer !important;
+        }
+        .green-button:hover {
+            background-color: darkgreen !important; /* Buttonfarbe beim Hover-Effekt */
+        }
+    </style>
+</h:head>
+<h:body>
+    <div class="container">
+        <a href="index.xhtml">
+            <img src="favicon.ico" alt="CO2 emissions" />
+        </a>
+        <h1>Dashboard</h1>
+    </div>
+    <h:form style="position:absolute; top:20px; right:20px;">
+        <p:link value="Home" outcome="/index.xhtml" style="margin-right:1rem;" rendered="#{credentialController.isLoggedIn()}"></p:link>
+        <p:commandButton value="Logout" action="#{credentialController.logout()}" rendered="#{credentialController.isLoggedIn()}" styleClass="green-button"></p:commandButton>
+    </h:form>
+    <div style="position: absolute; top: 20px; left: 20px;">
+        <i class="pi pi-user"></i>
+        <h:outputText style="margin-left:0.5rem;" value="#{credential.username}"></h:outputText>
+    </div>
+
+    <div style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column;">
+        <h:form style="display:flex;gap:5px" id="selectCountry">
+            <p:selectOneMenu converter="countryConverter" value="#{country}">
+                <f:selectItems value="#{countryController.countries}" var="val" itemLabel="#{val.name}" itemValue="#{val}"></f:selectItems>
+                <f:ajax event="itemSelect" execute="selectCountry" render="emissionTableForm" update="add-emission emissionTableForm" listener="#{emissionController.setEmissions()}" />
+            </p:selectOneMenu>
+            <p:commandButton value="New" icon="pi pi-plus" styleClass="ui-button-outlined" onclick="PF('dlg').show()" />
+            <p:commandButton value="Delete" icon="pi pi-trash" styleClass="ui-button-outlined" style="color:red" rendered="#{credentialController.isPublisher()}" action="#{countryController.remove()}" render="selectCountry emissionTableForm" update="selectCountry emissionTableForm" />
+        </h:form>
+        <h:form>
+            <p:dialog widgetVar="dlg">
+                <h3>Add a new country</h3>
+                <p:panelGrid columns="1">
+                    <p:outputLabel value="Name" />
+                    <p:inputText value="#{dialogCountry.name}" />
+                    <p:outputLabel value="Code" />
+                    <p:inputText value="#{dialogCountry.code}" />
+                    <p:commandButton value="Save" action="#{countryController.add()}" onclick="PF('dlg').hide()" update="emissionTableForm selectCountry" render="emissionTableForm selectCountry" />
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+        <h:form id="add-emission" style="margin-top:2rem;margin-bottom:2rem;">
+            <p:panelGrid columns="5">
+                <p:outputLabel value="Year" />
+                <p:inputText value="#{emission.year}" />
+                <p:outputLabel value="Amount of CO₂" />
+                <p:inputText value="#{emission.amount}" />
+                <p:commandButton value="Create draft" action="#{emissionController.add()}" update="emissionTableForm" render="emissionTableForm" styleClass="green-button" />
+            </p:panelGrid>
+        </h:form>
+        <h:form id="emissionTableForm">
+            <p:dataTable id="emissionTable" value="#{emissionController.emissions}" stripedRows="true" var="val" rowKey="#{val.year}">
+                <p:column headerText="Year">
+                    <h:outputText value="#{val.year}" />
+                </p:column>
+                <p:column headerText="Amount">
+                    <h:outputText value="#{val.amount}"></h:outputText>
+                    <h:outputLabel value=" kt"></h:outputLabel>
+                </p:column>
+                <p:column headerText="Approve" rendered="#{val.draft and credentialController.isPublisher()}">
+                    <p:commandButton value="Approve" update="@this emissionTableForm" render="@this emissionTableForm" action="#{emissionController.approve(val)}"></p:commandButton>
+                </p:column>
+                <p:column headerText="Approval" rendered="#{!credentialController.isPublisher()}">
+                    <h:outputText value="Approved" rendered="#{!val.draft}"></h:outputText>
+                    <h:outputText value="Disapproved" rendered="#{val.draft}"></h:outputText>
+                </p:column>
+                <p:column rendered="#{credentialController.isPublisher()}">
+                    <p:commandButton icon="pi pi-trash" update="@this emissionTableForm" render="@this emissionTableForm" action="#{emissionController.remove(val)}"></p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </div>
+</h:body>
+</html>

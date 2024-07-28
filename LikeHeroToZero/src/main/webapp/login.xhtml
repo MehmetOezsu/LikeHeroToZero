@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <title>Like Hero To Zero</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <style>
+        body {
+            background-color: rgb(235, 236, 231); /* Hintergrundfarbe setzen */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        button, .ui-button {
+            background-color: green !important; /* Buttonfarbe auf Grün setzen */
+            color: white !important;
+            border: none !important;
+            padding: 10px 20px !important;
+            cursor: pointer !important;
+        }
+        button:hover, .ui-button:hover {
+            background-color: darkgreen !important; /* Buttonfarbe beim Hover-Effekt */
+        }
+    </style>
+</h:head>
+<h:body>
+    <h1>Login</h1>
+    <p:link style="position:fixed; top:20px; right:20px;" value="Back" outcome="index.xhtml" />
+    <h:form style="display:flex;flex-direction:column;max-width:max-content;">
+        <p:panelGrid columns="2">
+            <h:outputLabel value="Username:" for="username" />
+            <h:inputText id="username" value="#{credential.username}" size="40" />
+            <h:outputLabel value="Password: " for="password" />
+            <h:inputSecret id="password" value="#{credential.password}" size="40" />
+        </p:panelGrid>
+        <p:commandButton value="Login" action="#{credentialController.login()}">
+            <f:ajax value="process" execute="password username" />
+        </p:commandButton>
+    </h:form>
+</h:body>
+</html>

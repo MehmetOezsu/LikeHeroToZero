@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <title>Like Hero To Zero</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <style>
+        body {
+            background-color: rgb(235, 236, 231); /* Hintergrundfarbe setzen */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        img {
+            width: 150px; /* Breite des Bildes anpassen */
+            height: auto;
+            margin: 20px;
+        }
+        h1 {
+            margin-left: 20px;
+        }
+        .selectCountry {
+            background-color: rgb(235, 236, 231); /* Hintergrundfarbe der Auswahl setzen */
+        }
+        button, .ui-button {
+            background-color: green !important; /* Buttonfarbe auf Grün setzen */
+            color: white !important;
+            border: none !important;
+            padding: 10px 20px !important;
+            cursor: pointer !important;
+        }
+        button:hover, .ui-button:hover {
+            background-color: darkgreen !important; /* Buttonfarbe beim Hover-Effekt */
+        }
+    </style>
+</h:head>
+<h:body>
+    <div class="container">
+        <a href="index.xhtml">
+            <img src="favicon.ico" alt="CO2 emissions" />
+        </a>
+        <h1>CO₂ emissions</h1>
+    </div>
+    <h:form style="position:absolute; top:20px; right:20px;">
+        <p:link value="Login" outcome="login.xhtml" rendered="#{!credentialController.isLoggedIn()}" />
+        <p:link value="Dashboard" outcome="/dashboard.xhtml" style="margin-right:1rem;" rendered="#{credentialController.isLoggedIn()}"></p:link>
+        <p:commandButton value="Logout" action="#{credentialController.logout()}" rendered="#{credentialController.isLoggedIn()}">
+            <f:ajax value="process" execute="password username" />
+        </p:commandButton>
+    </h:form>
+    <h:panelGroup style="position: absolute; top: 20px; left: 20px;" rendered="#{credentialController.isLoggedIn()}">
+        <i class="pi pi-user"></i>
+        <h:outputText style="margin-left:0.5rem;" value="#{credential.username}"></h:outputText>
+    </h:panelGroup>
+    <h:form>
+        <p:selectOneMenu id="selectCountry" converter="countryConverter" value="#{country}" style="margin-top:2rem" styleClass="selectCountry">
+            <f:selectItems value="#{countryController.countries}" var="val" itemLabel="#{val.name}" itemValue="#{val}" />
+            <f:ajax event="itemSelect" execute="selectedCountry" render="emissionChart" listener="#{emissionController.setEmissionModel}" />
+        </p:selectOneMenu>
+    </h:form>
+    <p:lineChart id="emissionChart" model="#{emissionController.emissionModel}" style="width: 100%; height: 500px;" />
+</h:body>
+</html>
