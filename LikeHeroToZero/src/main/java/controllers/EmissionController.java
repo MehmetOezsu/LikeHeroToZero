@@ -11,66 +11,70 @@ import org.primefaces.model.charts.line.LineChartDataSet;
 import org.primefaces.model.charts.line.LineChartModel;
 import org.primefaces.model.charts.line.LineChartOptions;
 import org.primefaces.model.charts.optionconfig.title.Title;
+import org.primefaces.model.charts.optionconfig.legend.Legend;
+import org.primefaces.model.charts.optionconfig.tooltip.Tooltip;
 
 import beans.CountryBean;
-import beans.CredentialBean;
 import beans.EmissionBean;
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.context.ExternalContext;
-import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.servlet.http.HttpServletRequest;
 import models.Emission;
 import services.EmissionService;
-import types.Role;
 
 @Named
 @ViewScoped
 public class EmissionController implements Serializable {
-    private static final long serialVersionUID = 1L;
 
-    @Inject
-    private CountryBean country;
-    @Inject
-    private CredentialBean user;
-    @Inject
-    private EmissionBean emission;
-    @Inject
-    private EmissionService emissionService;
+    private static final long serialVersionUID = 1L;
+    private @Inject CountryBean country;
+    private @Inject EmissionBean emission;
+    private @Inject EmissionService emissionService;
     private List<Emission> emissions = new ArrayList<>();
     private LineChartModel model = new LineChartModel();
 
+    public EmissionController() {
+    }
+
     @PostConstruct
     public void init() {
-        setEmissions();
-        setEmissionModel();
+        this.setEmissions();
+        this.setEmissionModel();
     }
 
     public LineChartModel setEmissionModel() {
         model = new LineChartModel();
         ChartData data = new ChartData();
+        LineChartOptions options = new LineChartOptions();
+
         Title title = new Title();
         title.setDisplay(true);
-        title.setText("Emission");
-        LineChartOptions options = new LineChartOptions();
         options.setTitle(title);
+
+        Legend legend = new Legend();
+        legend.setDisplay(true);
+        legend.setPosition("top");
+        options.setLegend(legend);
+
+        Tooltip tooltip = new Tooltip();
+        tooltip.setEnabled(true);
+        options.setTooltip(tooltip);
+
         model.setOptions(options);
 
         if (country.getCode() == null || country.getId() == null) {
             return model;
         }
-
         List<Emission> emissions = emissionService.findAllByCountry(country, false);
         List<String> years = emissions.stream().map(e -> String.valueOf(e.getYear())).collect(Collectors.toList());
-        List<Object> amounts = emissions.stream().map(Emission::getAmount).collect(Collectors.toList());
+        List<Object> amounts = emissions.stream().map(e -> e.getAmount()).collect(Collectors.toList());
 
         LineChartDataSet dataSet = new LineChartDataSet();
         dataSet.setData(amounts);
         dataSet.setFill(false);
-        dataSet.setLabel("CO₂ in kt");
-        dataSet.setBorderColor("rgb(75, 192, 192)");
+        dataSet.setLabel("CO2 emissions in kt");
+        dataSet.setBorderColor("rgb(0, 128, 0)"); // Grün
         dataSet.setTension(0.1);
         data.addChartDataSet(dataSet);
         data.setLabels(years);
@@ -87,26 +91,19 @@ public class EmissionController implements Serializable {
     }
 
     public void setEmissions() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        ExternalContext context = facesContext.getExternalContext();
-        HttpServletRequest request = (HttpServletRequest) context.getRequest();
-        String path = request.getRequestURI();
-        boolean draft = false;
-        if (path.contains("dashboard") && user != null && user.getRole() == Role.Publisher) {
-            draft = true;
-        }
         if (country.getCode() != null && country.getId() != null) {
             emissions.clear();
-            emissions.addAll(emissionService.findAllByCountry(country, draft));
+            emissions.addAll(emissionService.findAllByCountry(country, false));
         }
     }
 
     public void add() {
-        if (emission.getAmount() <= 0.0 || emission.getYear() <= 0) return;
-        emission.setCountry(country);
-        Emission newEmission = emissionService.add(emission);
-        emissions.add(newEmission);
-        Collections.sort(emissions);
+        if (this.emission.getAmount() <= 0.0 || this.emission.getYear() <= 0)
+            return;
+        this.emission.setCountry(this.country);
+        Emission newEmission = emissionService.add(this.emission);
+        this.emissions.add(newEmission);
+        Collections.sort(this.emissions);
     }
 
     public void approve(Emission emission) {
@@ -114,9 +111,9 @@ public class EmissionController implements Serializable {
         boolean updated = emissionService.update(emission);
         if (updated) {
             emissionService.removeById(emission.getId());
-            emissions.remove(emission);
+            this.emissions.remove(emission);
         }
-        setEmissions();
+        this.setEmissions();
     }
 
     public void remove(Emission emission) {

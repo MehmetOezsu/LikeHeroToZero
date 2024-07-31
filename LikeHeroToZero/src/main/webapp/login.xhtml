@@ -10,35 +10,69 @@
     <style>
         body {
             background-color: rgb(235, 236, 231); /* Hintergrundfarbe setzen */
+            font-family: Arial, sans-serif; /* Schriftart setzen */
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin: 0;
         }
-        button, .ui-button {
+        .container {
+            text-align: center;
+            margin-top: 2rem; /* Abstand von oben */
+        }
+        h1 {
+            margin-bottom: 1.5rem;
+        }
+        .small-button {
+            padding: 3px 6px !important; /* Größe der Buttons verkleinern */
+            font-size: 12px !important;
+        }
+        .green-button {
             background-color: green !important; /* Buttonfarbe auf Grün setzen */
             color: white !important;
             border: none !important;
-            padding: 10px 20px !important;
             cursor: pointer !important;
         }
-        button:hover, .ui-button:hover {
+        .green-button:hover {
             background-color: darkgreen !important; /* Buttonfarbe beim Hover-Effekt */
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: green !important; /* Buttonfarbe auf Grün setzen */
+            color: white !important;
+            border: none !important;
+            padding: 3px 6px !important;
+            font-size: 12px !important;
+            cursor: pointer !important;
+        }
+        .back-button:hover {
+            background-color: darkgreen !important; /* Buttonfarbe beim Hover-Effekt */
+        }
+        .input-field {
+            margin-bottom: 1rem;
+            font-size: 12px !important;
         }
     </style>
 </h:head>
 <h:body>
-    <h1>Login</h1>
-    <p:link style="position:fixed; top:20px; right:20px;" value="Back" outcome="index.xhtml" />
-    <h:form style="display:flex;flex-direction:column;max-width:max-content;">
-        <p:panelGrid columns="2">
-            <h:outputLabel value="Username:" for="username" />
-            <h:inputText id="username" value="#{credential.username}" size="40" />
-            <h:outputLabel value="Password: " for="password" />
-            <h:inputSecret id="password" value="#{credential.password}" size="40" />
-        </p:panelGrid>
-        <p:commandButton value="Login" action="#{credentialController.login()}">
-            <f:ajax value="process" execute="password username" />
-        </p:commandButton>
+    <h:form>
+        <p:commandButton value="Back" action="index.xhtml" styleClass="back-button small-button" />
     </h:form>
+    <div class="container">
+        <h1>Login</h1>
+        <h:form>
+            <div class="input-field">
+                <h:outputLabel value="Username:" for="username" />
+                <h:inputText id="username" value="#{credential.username}" size="40" />
+            </div>
+            <div class="input-field">
+                <h:outputLabel value="Password:" for="password" />
+                <h:inputSecret id="password" value="#{credential.password}" size="40" />
+            </div>
+            <p:commandButton value="Login" action="#{credentialController.login()}" styleClass="green-button small-button" />
+        </h:form>
+    </div>
 </h:body>
 </html>

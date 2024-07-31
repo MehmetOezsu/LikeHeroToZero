@@ -10,6 +10,7 @@
     <style>
         body {
             background-color: rgb(235, 236, 231); /* Hintergrundfarbe setzen */
+            font-family: Arial, sans-serif; /* Schriftart setzen */
         }
         .container {
             display: flex;
@@ -24,11 +25,14 @@
         h1 {
             margin-left: 20px;
         }
+        .small-button {
+            padding: 3px 6px !important; /* Größe der Buttons verkleinern */
+            font-size: 12px !important;
+        }
         .green-button {
             background-color: green !important; /* Buttonfarbe auf Grün setzen */
             color: white !important;
             border: none !important;
-            padding: 5px 10px !important; /* Größe der Buttons verkleinern */
             cursor: pointer !important;
         }
         .green-button:hover {
@@ -38,7 +42,6 @@
             background-color: red !important; /* Buttonfarbe auf Rot setzen */
             color: white !important;
             border: none !important;
-            padding: 5px 10px !important; /* Größe der Buttons verkleinern */
             cursor: pointer !important;
         }
         .red-button:hover {
@@ -51,35 +54,33 @@
         <a href="index.xhtml">
             <img src="favicon.ico" alt="CO2 emissions" />
         </a>
-        <h1>Dashboard</h1>
     </div>
     <h:form style="position:absolute; top:20px; right:20px;">
-        <p:link value="Home" outcome="/index.xhtml" style="margin-right:1rem;" rendered="#{credentialController.isLoggedIn()}"></p:link>
-        <p:commandButton value="Logout" action="#{credentialController.logout()}" rendered="#{credentialController.isLoggedIn()}" styleClass="green-button"></p:commandButton>
+        <p:link value="Diagram" outcome="/index.xhtml" style="margin-right:1rem;" rendered="#{credentialController.isLoggedIn()}" />
+        <p:commandButton value="Logout" action="#{credentialController.logout()}" rendered="#{credentialController.isLoggedIn()}" styleClass="red-button small-button" />
     </h:form>
     <div style="position: absolute; top: 20px; left: 20px;">
-        <i class="pi pi-user"></i>
-        <h:outputText style="margin-left:0.5rem;" value="#{credential.username}"></h:outputText>
+        <h:outputText style="margin-left:0.5rem;" value="#{credential.username}" />
     </div>
 
     <div style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column;">
         <h:form style="display:flex;gap:5px" id="selectCountry">
             <p:selectOneMenu converter="countryConverter" value="#{country}">
-                <f:selectItems value="#{countryController.countries}" var="val" itemLabel="#{val.name}" itemValue="#{val}"></f:selectItems>
+                <f:selectItems value="#{countryController.countries}" var="val" itemLabel="#{val.name}" itemValue="#{val}" />
                 <f:ajax event="itemSelect" execute="selectCountry" render="emissionTableForm" update="add-emission emissionTableForm" listener="#{emissionController.setEmissions()}" />
             </p:selectOneMenu>
-            <p:commandButton value="New" icon="pi pi-plus" styleClass="ui-button-outlined" onclick="PF('dlg').show()" />
-            <p:commandButton value="Delete" styleClass="ui-button-outlined red-button" rendered="#{credentialController.isPublisher()}" action="#{countryController.remove()}" render="selectCountry emissionTableForm" update="selectCountry emissionTableForm" />
+            <p:commandButton value="Create" styleClass="green-button small-button" onclick="PF('dlg').show()" />
+            <p:commandButton value="Delete" styleClass="ui-button-outlined red-button small-button" rendered="#{credentialController.isPublisher()}" action="#{countryController.remove()}" render="selectCountry emissionTableForm" update="selectCountry emissionTableForm" />
         </h:form>
         <h:form>
             <p:dialog widgetVar="dlg">
-                <h3>Add a new country</h3>
+                <h3>add a country</h3>
                 <p:panelGrid columns="1">
-                    <p:outputLabel value="Name" />
+                    <p:outputLabel value="Country Name" />
                     <p:inputText value="#{dialogCountry.name}" />
-                    <p:outputLabel value="Code" />
+                    <p:outputLabel value="Country Code" />
                     <p:inputText value="#{dialogCountry.code}" />
-                    <p:commandButton value="Save" action="#{countryController.add()}" onclick="PF('dlg').hide()" update="emissionTableForm selectCountry" render="emissionTableForm selectCountry" />
+                    <p:commandButton value="Add" action="#{countryController.add()}" onclick="PF('dlg').hide()" update="emissionTableForm selectCountry" render="emissionTableForm selectCountry" styleClass="green-button small-button" />
                 </p:panelGrid>
             </p:dialog>
         </h:form>
@@ -89,7 +90,7 @@
                 <p:inputText value="#{emission.year}" />
                 <p:outputLabel value="Amount of CO₂" />
                 <p:inputText value="#{emission.amount}" />
-                <p:commandButton value="Create draft" action="#{emissionController.add()}" update="emissionTableForm" render="emissionTableForm" styleClass="green-button" />
+                <p:commandButton value="Add" action="#{emissionController.add()}" update="emissionTableForm" render="emissionTableForm" styleClass="green-button small-button" />
             </p:panelGrid>
         </h:form>
         <h:form id="emissionTableForm">
@@ -98,18 +99,18 @@
                     <h:outputText value="#{val.year}" />
                 </p:column>
                 <p:column headerText="Amount">
-                    <h:outputText value="#{val.amount}"></h:outputText>
-                    <h:outputLabel value=" kt"></h:outputLabel>
+                    <h:outputText value="#{val.amount}" />
+                    <h:outputLabel value=" kt" />
                 </p:column>
                 <p:column headerText="Approve" rendered="#{val.draft and credentialController.isPublisher()}">
-                    <p:commandButton value="Approve" update="@this emissionTableForm" render="@this emissionTableForm" action="#{emissionController.approve(val)}" styleClass="green-button"></p:commandButton>
+                    <p:commandButton value="Approve" update="@this emissionTableForm" render="@this emissionTableForm" action="#{emissionController.approve(val)}" styleClass="green-button small-button" />
                 </p:column>
                 <p:column headerText="Approval" rendered="#{!credentialController.isPublisher()}">
-                    <h:outputText value="Approved" rendered="#{!val.draft}"></h:outputText>
-                    <h:outputText value="Disapproved" rendered="#{val.draft}"></h:outputText>
+                    <h:outputText value="Approved" rendered="#{!val.draft}" />
+                    <h:outputText value="Disapproved" rendered="#{val.draft}" />
                 </p:column>
                 <p:column rendered="#{credentialController.isPublisher()}">
-                    <p:commandButton value="Delete" update="@this emissionTableForm" render="@this emissionTableForm" action="#{emissionController.remove(val)}" styleClass="red-button"></p:commandButton>
+                    <p:commandButton value="Delete" update="@this emissionTableForm" render="@this emissionTableForm" action="#{emissionController.remove(val)}" styleClass="red-button small-button" />
                 </p:column>
             </p:dataTable>
         </h:form>

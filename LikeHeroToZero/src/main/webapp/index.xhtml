@@ -10,6 +10,7 @@
     <style>
         body {
             background-color: rgb(235, 236, 231); /* Hintergrundfarbe setzen */
+            font-family: Arial, sans-serif; /* Schriftart setzen */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -31,15 +32,25 @@
         .selectCountry {
             background-color: rgb(235, 236, 231); /* Hintergrundfarbe der Auswahl setzen */
         }
-        .green-button {
+        button, .ui-button {
             background-color: green !important; /* Buttonfarbe auf Grün setzen */
             color: white !important;
             border: none !important;
-            padding: 5px 10px !important; /* Größe der Buttons verkleinern */
+            padding: 3px 6px !important; /* Größe der Buttons verkleinern */
+            font-size: 12px !important;
             cursor: pointer !important;
         }
-        .green-button:hover {
+        button:hover, .ui-button:hover {
             background-color: darkgreen !important; /* Buttonfarbe beim Hover-Effekt */
+        }
+           .red-button {
+            background-color: red !important; /* Buttonfarbe auf Rot setzen */
+            color: white !important;
+            border: none !important;
+            cursor: pointer !important;
+        }
+          .red-button:hover {
+            background-color: darkred !important; /* Buttonfarbe beim Hover-Effekt */
         }
     </style>
 </h:head>
@@ -48,17 +59,13 @@
         <a href="index.xhtml">
             <img src="favicon.ico" alt="CO2 emissions" />
         </a>
-        <h1>CO₂ emissions</h1>
     </div>
     <h:form style="position:absolute; top:20px; right:20px;">
         <p:commandButton value="Login" action="login.xhtml" rendered="#{!credentialController.isLoggedIn()}" styleClass="green-button" />
-        <p:link value="Dashboard" outcome="/dashboard.xhtml" style="margin-right:1rem;" rendered="#{credentialController.isLoggedIn()}"></p:link>
-        <p:commandButton value="Logout" action="#{credentialController.logout()}" rendered="#{credentialController.isLoggedIn()}" styleClass="green-button">
-            <f:ajax value="process" execute="password username" />
-        </p:commandButton>
+        <p:link value="Data" outcome="/data.xhtml" style="margin-right:1rem;" rendered="#{credentialController.isLoggedIn()}"></p:link>
+         <p:commandButton value="Logout" action="#{credentialController.logout()}" rendered="#{credentialController.isLoggedIn()}" styleClass="red-button small-button" />
     </h:form>
     <h:panelGroup style="position: absolute; top: 20px; left: 20px;" rendered="#{credentialController.isLoggedIn()}">
-        <i class="pi pi-user"></i>
         <h:outputText style="margin-left:0.5rem;" value="#{credential.username}"></h:outputText>
     </h:panelGroup>
     <h:form>
@@ -67,6 +74,6 @@
             <f:ajax event="itemSelect" execute="selectedCountry" render="emissionChart" listener="#{emissionController.setEmissionModel}" />
         </p:selectOneMenu>
     </h:form>
-    <p:lineChart id="emissionChart" model="#{emissionController.emissionModel}" style="width: 100%; height: 500px;" />
+    <p:lineChart id="emissionChart" model="#{emissionController.emissionModel}" style="width: 90%; height: 400px;" />
 </h:body>
 </html>

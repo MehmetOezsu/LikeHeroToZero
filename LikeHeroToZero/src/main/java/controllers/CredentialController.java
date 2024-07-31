@@ -54,7 +54,7 @@ public class CredentialController implements Serializable {
 			session.setAttribute("username", user.getUsername());
 			credential.setId(user.getId());
 			credential.setRole(user.getRole());
-			context.redirect("dashboard.xhtml");
+			context.redirect("data.xhtml");
 		} else {
 			context.redirect("login.xhtml");
 		}
