@@ -29,101 +29,98 @@ import types.Role;
 @Named
 @ViewScoped
 public class EmissionController implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-	private static final long serialVersionUID = 1L;
-	private @Inject CountryBean country;
-	private @Inject CredentialBean user;
-	private @Inject EmissionBean emission;
-	private @Inject EmissionService emissionService;
-	private List<Emission> emissions = new ArrayList<Emission>();
-	private LineChartModel model = new LineChartModel();
+    @Inject
+    private CountryBean country;
+    @Inject
+    private CredentialBean user;
+    @Inject
+    private EmissionBean emission;
+    @Inject
+    private EmissionService emissionService;
+    private List<Emission> emissions = new ArrayList<>();
+    private LineChartModel model = new LineChartModel();
 
-	public EmissionController() {
-	}
+    @PostConstruct
+    public void init() {
+        setEmissions();
+        setEmissionModel();
+    }
 
-	@PostConstruct
-	public void init() {
-		this.setEmissions();
-		this.setEmissionModel();
-	}
+    public LineChartModel setEmissionModel() {
+        model = new LineChartModel();
+        ChartData data = new ChartData();
+        Title title = new Title();
+        title.setDisplay(true);
+        title.setText("Emission");
+        LineChartOptions options = new LineChartOptions();
+        options.setTitle(title);
+        model.setOptions(options);
 
-	public LineChartModel setEmissionModel() {
-		model = new LineChartModel();
-		
-		ChartData data = new ChartData();
+        if (country.getCode() == null || country.getId() == null) {
+            return model;
+        }
 
-		Title title = new Title();
-		title.setDisplay(true);
-		title.setText("Emission");
-		
-		LineChartOptions options = new LineChartOptions();
-		options.setTitle(title);
-		model.setOptions(options);
+        List<Emission> emissions = emissionService.findAllByCountry(country, false);
+        List<String> years = emissions.stream().map(e -> String.valueOf(e.getYear())).collect(Collectors.toList());
+        List<Object> amounts = emissions.stream().map(Emission::getAmount).collect(Collectors.toList());
 
-		if (country.getCode() == null || country.getId() == null) {
-			return model;
-		}
-		List<Emission> emissions = emissionService.findAllByCountry(country, false);
-		List<String> years = emissions.stream().map(e -> String.valueOf(e.getYear())).collect(Collectors.toList());
-		List<Object> amounts = emissions.stream().map(e -> e.getAmount()).collect(Collectors.toList());
-		
-		LineChartDataSet dataSet = new LineChartDataSet();
-		dataSet.setData(amounts);
-		dataSet.setFill(false);
-		dataSet.setLabel("CO₂ in kt");
-		dataSet.setBorderColor("rgb(75, 192, 192)");
-		dataSet.setTension(0.1);
-		data.addChartDataSet(dataSet);
-		data.setLabels(years);
-		model.setData(data);
-		return model;
-	}
+        LineChartDataSet dataSet = new LineChartDataSet();
+        dataSet.setData(amounts);
+        dataSet.setFill(false);
+        dataSet.setLabel("CO₂ in kt");
+        dataSet.setBorderColor("rgb(75, 192, 192)");
+        dataSet.setTension(0.1);
+        data.addChartDataSet(dataSet);
+        data.setLabels(years);
+        model.setData(data);
+        return model;
+    }
 
-	public LineChartModel getEmissionModel() {
-		return model;
-	}
+    public LineChartModel getEmissionModel() {
+        return model;
+    }
 
-	public List<Emission> getEmissions() {
-		return emissions;
-	}
+    public List<Emission> getEmissions() {
+        return emissions;
+    }
 
-	public void setEmissions() {
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		ExternalContext context = facesContext.getExternalContext();
-		HttpServletRequest request = (HttpServletRequest) context.getRequest();
-		String path = request.getRequestURI();
-		boolean draft = false;
-		if (path.contains("dashboard") && this.user != null && this.user.getRole() == Role.Publisher) {
-			draft = true;
-		}
-		if (country.getCode() != null && country.getId() != null) {
-			emissions.clear();
-			emissions.addAll(emissionService.findAllByCountry(country, draft));
-		}
-	}
+    public void setEmissions() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext context = facesContext.getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) context.getRequest();
+        String path = request.getRequestURI();
+        boolean draft = false;
+        if (path.contains("dashboard") && user != null && user.getRole() == Role.Publisher) {
+            draft = true;
+        }
+        if (country.getCode() != null && country.getId() != null) {
+            emissions.clear();
+            emissions.addAll(emissionService.findAllByCountry(country, draft));
+        }
+    }
 
-	public void add() {
-		if (this.emission.getAmount() <= 0.0 || this.emission.getYear() <= 0)
-			return;
-		this.emission.setCountry(this.country);
-		Emission newEmission = emissionService.add(this.emission);
-		this.emissions.add(newEmission);
-		Collections.sort(this.emissions);
-	}
+    public void add() {
+        if (emission.getAmount() <= 0.0 || emission.getYear() <= 0) return;
+        emission.setCountry(country);
+        Emission newEmission = emissionService.add(emission);
+        emissions.add(newEmission);
+        Collections.sort(emissions);
+    }
 
-	public void approve(Emission emission) {
-		emission.setDraft(false);
-		boolean updated = emissionService.update(emission);
-		if (updated) {
-			emissionService.removeById(emission.getId());
-			this.emissions.remove(emission);
-		}
-		this.setEmissions();
-	}
+    public void approve(Emission emission) {
+        emission.setDraft(false);
+        boolean updated = emissionService.update(emission);
+        if (updated) {
+            emissionService.removeById(emission.getId());
+            emissions.remove(emission);
+        }
+        setEmissions();
+    }
 
-	public void remove(Emission emission) {
-		emissionService.removeById(emission.getId());
-		emissions.remove(emission);
-	}
-
+    public void remove(Emission emission) {
+        emissionService.removeById(emission.getId());
+        emissions.remove(emission);
+    }
 }

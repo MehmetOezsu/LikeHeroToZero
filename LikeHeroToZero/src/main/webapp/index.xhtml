@@ -31,14 +31,14 @@
         .selectCountry {
             background-color: rgb(235, 236, 231); /* Hintergrundfarbe der Auswahl setzen */
         }
-        button, .ui-button {
+        .green-button {
             background-color: green !important; /* Buttonfarbe auf Grün setzen */
             color: white !important;
             border: none !important;
-            padding: 10px 20px !important;
+            padding: 5px 10px !important; /* Größe der Buttons verkleinern */
             cursor: pointer !important;
         }
-        button:hover, .ui-button:hover {
+        .green-button:hover {
             background-color: darkgreen !important; /* Buttonfarbe beim Hover-Effekt */
         }
     </style>
@@ -51,9 +51,9 @@
         <h1>CO₂ emissions</h1>
     </div>
     <h:form style="position:absolute; top:20px; right:20px;">
-        <p:link value="Login" outcome="login.xhtml" rendered="#{!credentialController.isLoggedIn()}" />
+        <p:commandButton value="Login" action="login.xhtml" rendered="#{!credentialController.isLoggedIn()}" styleClass="green-button" />
         <p:link value="Dashboard" outcome="/dashboard.xhtml" style="margin-right:1rem;" rendered="#{credentialController.isLoggedIn()}"></p:link>
-        <p:commandButton value="Logout" action="#{credentialController.logout()}" rendered="#{credentialController.isLoggedIn()}">
+        <p:commandButton value="Logout" action="#{credentialController.logout()}" rendered="#{credentialController.isLoggedIn()}" styleClass="green-button">
             <f:ajax value="process" execute="password username" />
         </p:commandButton>
     </h:form>

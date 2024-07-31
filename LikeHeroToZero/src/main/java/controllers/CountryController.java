@@ -20,47 +20,44 @@ import services.CountryService;
 @Named
 @ViewScoped
 public class CountryController implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-	private static final long serialVersionUID = 1L;
+    @Inject
+    private CountryBean country;
+    @Inject
+    private CountryService countryService;
+    @Inject
+    private CountryDialogBean dialogCountry;
+    private List<Country> countries = new ArrayList<>();
 
-	private @Inject CountryBean country;
-	private @Inject CountryService countryService;
-	private @Inject CountryDialogBean dialogCountry;
-	private List<Country> countries = new ArrayList<Country>();
+    @PostConstruct
+    public void init() {
+        countries = countryService.findAll();
+        Collections.sort(countries);
+        Country firstCountry = countries.get(0);
+        country.setCode(firstCountry.getCode());
+        country.setName(firstCountry.getName());
+        country.setId(firstCountry.getId());
+    }
 
-	public CountryController() {
-	}
+    public List<Country> getCountries() {
+        return countries;
+    }
 
-	@PostConstruct
-	public void init() {
-		countries = countryService.findAll();
-		Collections.sort(countries);
-		country.setCode(countries.get(0).getCode());
-		country.setName(countries.get(0).getName());
-		country.setId(countries.get(0).getId());
-	}
+    public void add() {
+        boolean hasCountry = countries.stream()
+                .anyMatch(c -> c.getName().equals(dialogCountry.getName()) || c.getCode().equals(dialogCountry.getCode()));
+        if (hasCountry) return;
+        Country newCountry = countryService.add(dialogCountry);
+        countries.add(newCountry);
+        Collections.sort(countries);
+    }
 
-	public List<Country> getCountries() {
-		return countries;
-	}
-
-	public void add() {
-		boolean hasCountry = countries.stream().anyMatch(c -> c.getName().equals(this.dialogCountry.getName())
-				|| c.getCode().equals(this.dialogCountry.getCode()));
-		if (hasCountry)
-			return;
-		Country country = countryService.add(this.dialogCountry);
-		countries.add(country);
-		Collections.sort(countries);
-
-	}
-
-	public void remove() throws IOException {
-		countryService.removeById(this.country.getId());
-		countries.remove(this.country);
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		ExternalContext context = facesContext.getExternalContext();
-		context.redirect("dashboard.xhtml");
-	}
-
+    public void remove() throws IOException {
+        countryService.removeById(country.getId());
+        countries.remove(country);
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext context = facesContext.getExternalContext();
+        context.redirect("dashboard.xhtml");
+    }
 }

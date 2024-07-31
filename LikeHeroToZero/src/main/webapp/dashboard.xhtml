@@ -28,11 +28,21 @@
             background-color: green !important; /* Buttonfarbe auf Grün setzen */
             color: white !important;
             border: none !important;
-            padding: 10px 20px !important;
+            padding: 5px 10px !important; /* Größe der Buttons verkleinern */
             cursor: pointer !important;
         }
         .green-button:hover {
             background-color: darkgreen !important; /* Buttonfarbe beim Hover-Effekt */
+        }
+        .red-button {
+            background-color: red !important; /* Buttonfarbe auf Rot setzen */
+            color: white !important;
+            border: none !important;
+            padding: 5px 10px !important; /* Größe der Buttons verkleinern */
+            cursor: pointer !important;
+        }
+        .red-button:hover {
+            background-color: darkred !important; /* Buttonfarbe beim Hover-Effekt */
         }
     </style>
 </h:head>
@@ -59,7 +69,7 @@
                 <f:ajax event="itemSelect" execute="selectCountry" render="emissionTableForm" update="add-emission emissionTableForm" listener="#{emissionController.setEmissions()}" />
             </p:selectOneMenu>
             <p:commandButton value="New" icon="pi pi-plus" styleClass="ui-button-outlined" onclick="PF('dlg').show()" />
-            <p:commandButton value="Delete" icon="pi pi-trash" styleClass="ui-button-outlined" style="color:red" rendered="#{credentialController.isPublisher()}" action="#{countryController.remove()}" render="selectCountry emissionTableForm" update="selectCountry emissionTableForm" />
+            <p:commandButton value="Delete" styleClass="ui-button-outlined red-button" rendered="#{credentialController.isPublisher()}" action="#{countryController.remove()}" render="selectCountry emissionTableForm" update="selectCountry emissionTableForm" />
         </h:form>
         <h:form>
             <p:dialog widgetVar="dlg">
@@ -92,14 +102,14 @@
                     <h:outputLabel value=" kt"></h:outputLabel>
                 </p:column>
                 <p:column headerText="Approve" rendered="#{val.draft and credentialController.isPublisher()}">
-                    <p:commandButton value="Approve" update="@this emissionTableForm" render="@this emissionTableForm" action="#{emissionController.approve(val)}"></p:commandButton>
+                    <p:commandButton value="Approve" update="@this emissionTableForm" render="@this emissionTableForm" action="#{emissionController.approve(val)}" styleClass="green-button"></p:commandButton>
                 </p:column>
                 <p:column headerText="Approval" rendered="#{!credentialController.isPublisher()}">
                     <h:outputText value="Approved" rendered="#{!val.draft}"></h:outputText>
                     <h:outputText value="Disapproved" rendered="#{val.draft}"></h:outputText>
                 </p:column>
                 <p:column rendered="#{credentialController.isPublisher()}">
-                    <p:commandButton icon="pi pi-trash" update="@this emissionTableForm" render="@this emissionTableForm" action="#{emissionController.remove(val)}"></p:commandButton>
+                    <p:commandButton value="Delete" update="@this emissionTableForm" render="@this emissionTableForm" action="#{emissionController.remove(val)}" styleClass="red-button"></p:commandButton>
                 </p:column>
             </p:dataTable>
         </h:form>
