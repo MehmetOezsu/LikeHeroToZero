@@ -10,7 +10,7 @@ import jakarta.persistence.Id;
 import types.Role;
 
 @Entity
-public class Credential {
+public class  Credential {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

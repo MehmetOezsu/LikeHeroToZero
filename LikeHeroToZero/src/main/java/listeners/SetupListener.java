@@ -25,7 +25,7 @@ public class SetupListener implements ServletContextListener {
 
     public String readFile(String path) {
         ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("co2_emissions.csv").getFile());
+        File file = new File(classLoader.getResource("emissions.csv").getFile());
         try {
             return FileUtils.readFileToString(file, "UTF-8");
         } catch (IOException e) {
@@ -61,7 +61,7 @@ public class SetupListener implements ServletContextListener {
             user2.setRole(Role.Researcher);
             em.persist(user2);
 
-            String data = readFile("co2_emission.csv");
+            String data = readFile("emission.csv");
             if (data == null) {
                 return null;
             }
