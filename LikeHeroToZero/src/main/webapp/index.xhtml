@@ -9,8 +9,8 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <style>
         body {
-            background-color: rgb(235, 236, 231); /* Hintergrundfarbe setzen */
-            font-family: Arial, sans-serif; /* Schriftart setzen */
+            background-color: rgb(235, 236, 231);
+            font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -22,7 +22,7 @@
             justify-content: center;
         }
         img {
-            width: 150px; /* Breite des Bildes anpassen */
+            width: 150px;
             height: auto;
             margin: 20px;
         }
@@ -30,50 +30,75 @@
             margin-left: 20px;
         }
         .selectCountry {
-            background-color: rgb(235, 236, 231); /* Hintergrundfarbe der Auswahl setzen */
+            background-color: rgb(235, 236, 231);
         }
         button, .ui-button {
-            background-color: green !important; /* Buttonfarbe auf Grün setzen */
+            background-color: green !important;
             color: white !important;
             border: none !important;
-            padding: 3px 6px !important; /* Größe der Buttons verkleinern */
+            padding: 3px 6px !important;
             font-size: 12px !important;
             cursor: pointer !important;
         }
         button:hover, .ui-button:hover {
-            background-color: darkgreen !important; /* Buttonfarbe beim Hover-Effekt */
+            background-color: darkgreen !important;
         }
-           .red-button {
-            background-color: red !important; /* Buttonfarbe auf Rot setzen */
+        .red-button {
+            background-color: red !important;
             color: white !important;
             border: none !important;
             cursor: pointer !important;
         }
-          .red-button:hover {
-            background-color: darkred !important; /* Buttonfarbe beim Hover-Effekt */
+        .red-button:hover {
+            background-color: darkred !important;
+        }
+        .top-left {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .top-right {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
     </style>
 </h:head>
 <h:body>
+    <!-- Link "Data" auf der linken Seite -->
+    <h:form class="top-left">
+        <p:link value="Data" outcome="/data.xhtml" rendered="#{credentialController.isLoggedIn()}" />
+    </h:form>
+
+    <!-- Name und Logout-Button auf der rechten Seite -->
+    <h:panelGroup class="top-right" rendered="#{credentialController.isLoggedIn()}">
+        <h:outputText value="#{credential.username}" />
+        <h:form>
+            <p:commandButton value="Logout" action="#{credentialController.logout()}" styleClass="red-button small-button" />
+        </h:form>
+    </h:panelGroup>
+
+    <!-- Login-Button auf der rechten Seite, wenn nicht eingeloggt -->
+    <h:form class="top-right">
+        <p:commandButton value="Login" action="login.xhtml" rendered="#{!credentialController.isLoggedIn()}" styleClass="green-button" />
+    </h:form>
+
     <div class="container">
         <a href="index.xhtml">
             <img src="favicon.ico" alt="CO2 emissions" />
         </a>
     </div>
-    <h:form style="position:absolute; top:20px; right:20px;">
-        <p:commandButton value="Login" action="login.xhtml" rendered="#{!credentialController.isLoggedIn()}" styleClass="green-button" />
-        <p:link value="Data" outcome="/data.xhtml" style="margin-right:1rem;" rendered="#{credentialController.isLoggedIn()}"></p:link>
-         <p:commandButton value="Logout" action="#{credentialController.logout()}" rendered="#{credentialController.isLoggedIn()}" styleClass="red-button small-button" />
-    </h:form>
-    <h:panelGroup style="position: absolute; top: 20px; left: 20px;" rendered="#{credentialController.isLoggedIn()}">
-        <h:outputText style="margin-left:0.5rem;" value="#{credential.username}"></h:outputText>
-    </h:panelGroup>
+
     <h:form>
         <p:selectOneMenu id="selectCountry" converter="countryConverter" value="#{country}" style="margin-top:2rem" styleClass="selectCountry">
             <f:selectItems value="#{countryController.countries}" var="val" itemLabel="#{val.name}" itemValue="#{val}" />
             <f:ajax event="itemSelect" execute="selectedCountry" render="emissionChart" listener="#{emissionController.setEmissionModel}" />
         </p:selectOneMenu>
     </h:form>
+
     <p:lineChart id="emissionChart" model="#{emissionController.emissionModel}" style="width: 90%; height: 400px;" />
 </h:body>
 </html>

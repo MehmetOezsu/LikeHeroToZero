@@ -8,10 +8,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            flex-direction: column;
             text-align: center;
+            height: 100vh;
             margin: 0;
             background-color: rgb(235, 236, 231); /* Hintergrundfarbe setzen */
+            font-family: Arial, sans-serif; /* Schriftart setzen */
         }
         .container {
             text-align: center;
@@ -24,17 +26,39 @@
         button {
             margin-left: 10px;
         }
+        .description {
+            text-align: center;
+            margin: 20px;
+            font-size: 16px;
+            line-height: 1.5;
+            max-width: 800px;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <h1>Welcome to: Like Hero To Zero</h1>
+        <div class="description">
+            <h2>Your partner for a sustainable future</h2>
+            <p>
+               	Like Hero to Zero is a sustainability project. This website provides publicly accessible data on global CO2 emissions, sourced from registered scientists.
+            </p>
+            <p>
+                In a world that is rapidly changing, where climate change is one of the greatest challenges of our time, Like Hero to Zero is committed to environmental protection with passion and expertise.
+            </p>
+            <p>
+                Our goal is to bring more transparency to the CO2 emissions of countries. We believe that information and awareness are the first steps towards change. That's why we are working on creating a publicly accessible website that allows everyone to gain insights into CO2 emissions worldwide.
+            </p>
+            <p>
+                At Like Hero to Zero, we combine technological know-how with a deep understanding of environmental issues. Our work is more than just a job; it is our passion and our contribution to a livable future for all. We invite you to become part of this important mission and to join us on the path to a more sustainable planet. Our approach is to use innovative technologies and scientific research to provide accurate data and analyses.
+            </p>
+        </div>
         <a href="index.xhtml">
             <img src="favicon.ico" alt="CO2 emissions">
         </a>
         <div>
-            <h2>Click on the logo to be redirected to the worldwide CO2 emissions.</h2>
+            <h2>Click on the logo to be redirected to worldwide CO2 emissions.</h2>
         </div>
     </div>
 </body>

@@ -48,13 +48,14 @@ public class EmissionController implements Serializable {
         ChartData data = new ChartData();
         LineChartOptions options = new LineChartOptions();
 
+        // Entfernen des Titels
         Title title = new Title();
-        title.setDisplay(true);
+        title.setDisplay(false); // Titel wird deaktiviert
         options.setTitle(title);
 
+        // Entfernen der Legende
         Legend legend = new Legend();
-        legend.setDisplay(true);
-        legend.setPosition("top");
+        legend.setDisplay(false); // Legende wird deaktiviert
         options.setLegend(legend);
 
         Tooltip tooltip = new Tooltip();
