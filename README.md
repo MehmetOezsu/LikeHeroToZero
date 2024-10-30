@@ -1,14 +1,16 @@
-# Login
+# Like Hero To Zero
 
-## Wissenschaftler
+Webanwendung zum Kurs IPWA02-01 Aufgabenstellung 1: Like Hero To Zero
+
+## Login
+
+### Wissenschaftler
 
 Username: researcher
 
 Password: password
 
-
-
-## Herausgeber
+### Herausgeber
 
 Username: publisher
 
